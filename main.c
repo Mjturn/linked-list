@@ -20,13 +20,14 @@ Node* construct_node(int value) {
     return node;
 }
 
-void insert_at_beginning(int value, Node** head) {
+Node* insert_at_beginning(int value, Node** head) {
     Node* node = construct_node(value);
     node->next = *head;
     *head = node;
+    return node;
 }
 
-void insert_at_end(int value, Node* head) {
+Node* insert_at_end(int value, Node* head) {
     Node* current = head;
     Node* node = construct_node(value);
 
@@ -35,28 +36,67 @@ void insert_at_end(int value, Node* head) {
     }
 
     current->next = node;
+    return node;
+}
+
+void remove_from_beginning(Node** head) {
+    if(*head == NULL) {
+        return;
+    }
+    
+    Node* temp = *head;
+    *head = (*head)->next;
+    free(temp);
+}
+
+void remove_from_end(Node** head) {
+    Node* current = *head;
+
+    if(*head == NULL) {
+        return;
+    }
+
+    if((*head)->next == NULL) {
+        *head = NULL;
+        free(*head);
+        return;
+    }
+
+    while(current->next->next != NULL) {
+        current = current->next;
+    }
+
+    current->next = NULL;
+    free(current->next);
 }
 
 void display_list(Node* head) {
-    const char ANSI_RED[] = "\033[1;31m";
-    const char ANSI_ORANGE[] = "\033[38;5;208m";
-    const char ANSI_YELLOW[] = "\033[33m";
-    const char ANSI_RESET[] = "\033[0m";
-    
-    printf("%sLinked List: %s", ANSI_RED, ANSI_RESET);
+    printf("Linked List: ");
     Node* current = head;
 
     while(current != NULL) {
-        printf("%s%d%s", ANSI_ORANGE, current->value, ANSI_RESET);
+        printf("%d", current->value);
         
         if (current->next != NULL) {
-            printf("%s -> %s", ANSI_YELLOW, ANSI_RESET);
+            printf(" -> ");
         }
        
         current = current->next;
     }
         
     printf("\n");
+}
+
+int get_length(Node* head) {
+    Node* current = head;
+    int length = 0;
+
+    while(current != NULL) {
+        length++;
+        current = current->next;
+    }
+
+    return length;
 }
 
 void free_memory(Node* head) {
@@ -71,12 +111,13 @@ void free_memory(Node* head) {
 }
 
 int main() {
-    Node* head = construct_node(1);
-    insert_at_end(2, head);
-    insert_at_end(3, head);
-    insert_at_end(4, head);
-    insert_at_end(5, head);
-    display_list(head);
-    free_memory(head);
+    Node* node_1 = construct_node(1);
+    Node* node_2 = insert_at_end(2, node_1);
+    Node* node_3 = insert_at_end(3, node_1);
+    Node* node_4 = insert_at_end(4, node_1);
+    Node* node_5 = insert_at_end(5, node_1);
+    display_list(node_1);
+    printf("Length: %d\n", get_length(node_1));
+    free_memory(node_1);
     return 0;
 }
